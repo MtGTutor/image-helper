@@ -84,6 +84,29 @@ function arguments(array $args = [])
 }
 
 /**
+ * check if a flag is set or not
+ * @param  string  $flag   flag
+ * @param  array  &$flags  Flags
+ * @return boolean
+ */
+function isFlagSet($flag, &$flags)
+{
+    return in_array($flag, $flags);
+}
+
+/**
+ * check if option exists and has a specific value
+ * @param  string $key      option key
+ * @param  string $value    value to check
+ * @param  array &$options  options from arguments
+ * @return boolean
+ */
+function optionEquals($key, $value, &$options)
+{
+    return array_key_exists($key, $options) && $options[$key] === $value;
+}
+
+/**
  * Main Entry point
  * @param array $args
  * @return int
@@ -100,7 +123,7 @@ function main(array $args = [])
     $args = arguments($args);
 
     // display version
-    if (in_array('v', $args['flags']) || array_key_exists('version', $args['options'])) {
+    if (isFlagSet('v', $args['flags']) || optionEquals('version', true, $args['options'])) {
         echo 'imageHelper version ' . VERSION;
     }
 
