@@ -1,3 +1,4 @@
 src/
 dest/
 node_modules/
+/vendor/

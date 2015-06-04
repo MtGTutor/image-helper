@@ -4,6 +4,13 @@
  * @author PascalKleindienst <mail@pascalkleindienst.de>
  * @version 1.0 
  */
+// check if vendor folder exists, otherwise run composer update
+checkDependencies();
+
+// include dependencies
+require_once 'vendor/autoload.php';
+
+use Extlib\ImageOptimizer;
 
 /**
  * Constants
@@ -138,6 +145,45 @@ function isArgument($arg, &$args)
 }
 
 /**
+ * Get Path to optimizer binary
+ * @param  string $optimizer which optimizer
+ * @return string
+ */
+function getOptimizerPath($optimizer)
+{
+    $whichOS      = strtolower(php_uname('s'));
+    $path         = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'optimizers' . DIRECTORY_SEPARATOR;
+    $usedOs       = 'linux';
+    $architecture = 'x86';
+
+    // check for os
+    if (strpos($whichOS, 'windows') !== false) {
+        $usedOs = 'win';
+        $optimizer .= '.exe';
+    }
+
+    // check for 64 bit
+    if (PHP_INT_SIZE === 8) { #64bit
+        $architecture = 'x64';
+    }
+
+    // return path
+    return $path . $usedOs. DIRECTORY_SEPARATOR . $architecture . DIRECTORY_SEPARATOR . $optimizer;
+}
+
+/**
+ * checks if composer dependencies are loaded, if not runs composer update
+ * @return void
+ */
+function checkDependencies()
+{
+    if (!file_exists('vendor') || !file_exists('composer.lock')) {
+        echo 'Load missing dependencies: ' . PHP_EOL;
+        system('composer update');
+    }
+}
+
+/**
  * Main Entry point
  * @param array $args
  * @return int
@@ -159,9 +205,7 @@ function main(array $args = [])
     }
 
     // Minify-Task
-    if (isCommand('minify', $args)) {
-        //@TODO: create gruntfile with minify grunt-task
-        //@TODO: Check if node_modules are installed -> otherwise run install
+    if (isCommand('minify', $args)) {        
         // vars
         $folder  = $args['arguments'];
         $srcDir  = isFlagSet('src-dir', $args['flags']) ? $args['flags']['src-dir'] : DEFAULT_SRC_DIR;
@@ -172,7 +216,14 @@ function main(array $args = [])
             //@TODO - selectFromList
         }
 
-        //@TODO: run minify grunt task
+        //@TODO: minify
+        // $optimizer = new ImageOptimizer([
+        //     ImageOptimizer::OPTIMIZER_OPTIPNG   => getOptimizerPath('optipng'),
+        //     ImageOptimizer::OPTIMIZER_JPEGOPTIM => getOptimizerPath('jpegoptim'),
+        //     ImageOptimizer::OPTIMIZER_GIFSICLE  => getOptimizerPath('gifsicle')
+        // ]);
+
+        // $optimizer->optimize(dirname(__FILE__) . "/test.jpg"); //return true
     }
     
     return 0;

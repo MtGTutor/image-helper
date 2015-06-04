@@ -1,0 +1,15 @@
+{
+    "name": "mtgtutor/image-helper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pascal Kleindienst",
+            "email": "mail@pascalkleindienst.de"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "lciolecki/php-image-optimizer": "dev-master"
+    }
+}
