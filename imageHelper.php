@@ -184,6 +184,57 @@ function checkDependencies()
 }
 
 /**
+ * Get folders from user selection
+ * @return array
+ */
+function selectFromList($dir)
+{
+    $folders = [];
+    $list = glob($dir . '/*', GLOB_ONLYDIR);
+
+    foreach ($list as $key => $dir) {
+        $list[$key] = basename($dir);
+    }
+
+    // Output function
+    $output = function ($list) {
+        $max = count($list);
+        echo 'Available Sets: ' . PHP_EOL;
+        for ($i=0; $i < $max; $i++) {
+            echo '[' . ($i+1) . ']: ' . $list[$i] . PHP_EOL;
+        }
+    };
+
+    // get selection
+    while (true) {
+        // get user input
+        $output($list);
+        echo 'Select a set by number (Enter nothing to end selection): ';
+        $line = fgets(STDIN);
+        $line = intval(trim($line));
+
+        // process selection
+        if (array_key_exists($line-1, $list)) {
+            // add selection to folders
+            $key = $line - 1;
+            $folders[] = $list[$key];
+
+            // remove selection form list
+            unset($list[$key]);
+        }
+
+        // abort
+        if ($line === "" || empty($list)) {
+            break;
+        }        
+    }
+
+    echo 'Selected sets: ' . implode(', ', $folders);
+
+    return $folders;
+}
+
+/**
  * Main Entry point
  * @param array $args
  * @return int
@@ -207,13 +258,13 @@ function main(array $args = [])
     // Minify-Task
     if (isCommand('minify', $args)) {        
         // vars
-        $folder  = $args['arguments'];
+        $folders = $args['arguments'];
         $srcDir  = isFlagSet('src-dir', $args['flags']) ? $args['flags']['src-dir'] : DEFAULT_SRC_DIR;
         $destDir = isFlagSet('dest-dir', $args['flags']) ? $args['flags']['dest-dir'] : DEFAULT_DEST_DIR;
 
         // if no folders are specified - display available list from --src-dir to select from
-        if (empty($folder)) {
-            //@TODO - selectFromList
+        if (empty($folders)) {
+            $folders = selectFromList($srcDir);
         }
 
         //@TODO: minify
