@@ -9,6 +9,8 @@
  * Constants
  */
 define('VERSION', '1.0');
+define('DEFAULT_SRC_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'src');
+define('DEFAULT_DEST_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR. 'dest');
 
 /**
  * @link http://php.net/manual/de/features.commandline.php#83843
@@ -50,8 +52,8 @@ function arguments(array $args = [])
                 list($com, $value) = explode("=", $com, 2);
             }
             // or is the option not followed by another option but by arguments?
-            elseif (count($args) && strpos($args[0], '-') !== 0) {
-                while (strpos($args[0], '-') !== 0) {
+            elseif (count($args) > 0 && strpos($args[0], '-') !== 0) {
+                while (count($args) > 0 && strpos($args[0], '-') !== 0) {
                     $value .= array_shift($args).' ';
                 }
                 
@@ -107,6 +109,35 @@ function optionEquals($key, $value, &$options)
 }
 
 /**
+ * check for command
+ * @param  string  $command 
+ * @param  array  &$command 
+ * @return boolean
+ */
+function isCommand($command, &$args)
+{
+    if (isArgument($command, $args['arguments'])) {
+        $key = array_search($command, $args['arguments']);
+        unset($args['arguments'][$key]);
+
+        $args['commands'][] = $command;
+    }
+
+    return in_array($command, $args['commands']);
+}
+
+/**
+ * check for argument
+ * @param  string  $arg 
+ * @param  array  &$args 
+ * @return boolean
+ */
+function isArgument($arg, &$args)
+{
+    return in_array($arg, $args);
+}
+
+/**
  * Main Entry point
  * @param array $args
  * @return int
@@ -127,6 +158,23 @@ function main(array $args = [])
         echo 'imageHelper version ' . VERSION;
     }
 
+    // Minify-Task
+    if (isCommand('minify', $args)) {
+        //@TODO: create gruntfile with minify grunt-task
+        //@TODO: Check if node_modules are installed -> otherwise run install
+        // vars
+        $folder  = $args['arguments'];
+        $srcDir  = isFlagSet('src-dir', $args['flags']) ? $args['flags']['src-dir'] : DEFAULT_SRC_DIR;
+        $destDir = isFlagSet('dest-dir', $args['flags']) ? $args['flags']['dest-dir'] : DEFAULT_DEST_DIR;
+
+        // if no folders are specified - display available list from --src-dir to select from
+        if (empty($folder)) {
+            //@TODO - selectFromList
+        }
+
+        //@TODO: run minify grunt task
+    }
+    
     return 0;
 }
 
