@@ -10,6 +10,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "lciolecki/php-image-optimizer": "dev-master"
+        "lciolecki/php-image-optimizer": "dev-master",
+        "intervention/image": "dev-master"
     }
 }
