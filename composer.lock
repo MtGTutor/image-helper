@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0e8a423f2374872783c08dcd477dee3d",
+    "hash": "22604177cb5ae0400def12e8e3a1a5d0",
     "packages": [
         {
             "name": "bensquire/php-image-optim",
