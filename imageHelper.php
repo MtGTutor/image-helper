@@ -19,11 +19,11 @@ if (php_sapi_name() == "cli") {
     // create args
     $args = new Arguments($argv);
     $command = null;
-
+    
     // Minify-Command
-    // if ($args->isCommand('minify')) {
-    //     $command = new Commands\Minify($args);
-    // }
+    if ($args->isCommand('minify')) {
+        $command = new Commands\Minify($args);
+    }
 
     // run app
     $app = new Application($args, $command);
