@@ -18,11 +18,21 @@ if (php_sapi_name() == "cli") {
 
     // create args
     $args = new Arguments($argv);
+    $container = new Container();
     $command = null;
+
+    // bind optimizer to container
+    $container->bind('Optimizer', function ($optipng, $jpegoptim, $gifsicle) {
+        return new \Extlib\ImageOptimizer([
+            \Extlib\ImageOptimizer::OPTIMIZER_OPTIPNG   => $optipng,
+            \Extlib\ImageOptimizer::OPTIMIZER_JPEGOPTIM => $jpegoptim,
+            \Extlib\ImageOptimizer::OPTIMIZER_GIFSICLE  => $gifsicle
+        ]);
+    });
     
     // Minify-Command
     if ($args->isCommand('minify')) {
-        $command = new Commands\Minify($args);
+        $command = new Commands\Minify($args, $container);
     }
 
     // run app

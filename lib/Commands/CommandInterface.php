@@ -1,6 +1,7 @@
 <?php namespace MtGTutor\CLI\ImageHelper\Commands;
 
 use MtGTutor\CLI\ImageHelper\Arguments;
+use MtGTutor\CLI\ImageHelper\Container;
 
 /**
  * Command Interface used by all Commands
@@ -13,7 +14,7 @@ interface CommandInterface
      * Set Arguments
      * @param Arguments $args
      */
-    public function __construct(Arguments $args);
+    public function __construct(Arguments $args, Container $container);
 
     /**
      * Run the command
