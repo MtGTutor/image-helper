@@ -67,9 +67,9 @@ class Arguments implements \ArrayAccess
             case 'isCommand':
                 if ($this->isArgumentSet($arg, $this['arguments'])) {
                     $key = array_search($arg, $this['arguments']);
-                    unset($this['arguments'][$key]);
+                    unset($this->container['arguments'][$key]);
 
-                    $this['commands'][] = $arg;
+                    $this->container['commands'][] = $arg;
                 }
 
                 return in_array($arg, $this['commands']);
