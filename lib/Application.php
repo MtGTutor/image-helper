@@ -3,8 +3,8 @@
 use MtGTutor\CLI\ImageHelper\Commands\CommandInterface;
 
 // Constants
-define('DEFAULT_SRC_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'src');
-define('DEFAULT_DEST_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR. 'dest');
+define('DEFAULT_SRC_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src');
+define('DEFAULT_DEST_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .  'dest');
 
 /**
  * Main Entry point
