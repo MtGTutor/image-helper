@@ -44,6 +44,7 @@ class Arguments implements \ArrayAccess
     public function __call($method, $args)
     {
         $arg = null;
+        $value = null;
 
         // two args
         if (count($args) === 2) {
@@ -54,7 +55,6 @@ class Arguments implements \ArrayAccess
         // one arg
         if (count($args) === 1) {
             $arg = $args[0];
-            $value = null;
         }
 
         switch ($method) {
