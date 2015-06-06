@@ -17,4 +17,4 @@ install:
   - phpenv rehash
 
 script:
-  - phpcs --report=summary --standard=PSR2 --ignore=/vendor/* --extensions=php /
+  - phpcs --report=summary --standard=PSR2 --ignore=/vendor/* --extensions=php .
