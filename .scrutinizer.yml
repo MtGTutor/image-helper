@@ -1,5 +1,5 @@
 filter:
-  excluded_paths: [tests/*, vendor/*]
+  excluded_paths: [tests/*, vendor/*, optimizers/*]
 
 checks:
   php:
@@ -10,24 +10,24 @@ before_commands:
 
 tools:
   # Code Sniffer
-  # php_code_sniffer:
-  #   enabled: true
-  #   command: phpcs
-  #   config:
-  #     standard: PSR2
-  #   filter:
-  #     excluded_paths:
-  #       - 'vendor/*'
+  php_code_sniffer:
+    enabled: true
+    command: phpcs
+    config:
+      standard: PSR2
+    filter:
+      excluded_paths:
+        - 'vendor/*'
 
   # PHP CS Fixer (http://http://cs.sensiolabs.org/).
-  # php_cs_fixer:
-  #   enabled: true
-  #   command: php-cs-fixer
-  #   config:
-  #     level: psr2
-  #   filter:
-  #     excluded_paths:
-  #         - 'vendor/*'
+  php_cs_fixer:
+    enabled: true
+    command: php-cs-fixer
+    config:
+      level: psr2
+    filter:
+      excluded_paths:
+          - 'vendor/*'
 
   # PHP Mess Detector (http://phpmd.org).
   # php_mess_detector:

@@ -4,6 +4,11 @@
  * Simple Class to handle arguments
  * @author PascalKleindienst <mail@pascalkleindienst.de>
  * @version 1.0
+ * 
+ * @method boolean isFlagSet(string $flag, array $flags)
+ * @method boolean isArgumentSet(string $arg, array $args)
+ * @method boolean optionEquals(string $option, mixed $equals, array $options)
+ * @method boolean isCommand(string $command, array $commands)
  */
 class Arguments implements \ArrayAccess
 {
@@ -34,10 +39,12 @@ class Arguments implements \ArrayAccess
      * Checks for flags, arguments, options and commands
      * @param  string $method
      * @param  array $args
-     * @return boolean
+     * @return boolean|null
      */
     public function __call($method, $args)
     {
+        $arg = null;
+
         // two args
         if (count($args) === 2) {
             $arg = $args[0];
@@ -54,15 +61,12 @@ class Arguments implements \ArrayAccess
             // check if a flag is set or not
             case 'isFlagSet':
                 return in_array($arg, $this['flags']);
-                break;
             // check if an argument is set or not
             case 'isArgumentSet':
                 return in_array($arg, $this['arguments']);
-                break;
             // check if option equals specific value
             case 'optionEquals':
                 return array_key_exists($arg, $this['options']) && $this['options'][$arg] === $value;
-                break;
             // check if option equals specific value
             case 'isCommand':
                 if ($this->isArgumentSet($arg, $this['arguments'])) {
@@ -73,8 +77,9 @@ class Arguments implements \ArrayAccess
                 }
 
                 return in_array($arg, $this['commands']);
-                break;
         }
+
+        return null;
     }
 
     /**
