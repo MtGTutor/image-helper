@@ -4,11 +4,11 @@
  * Simple Class to handle arguments
  * @author PascalKleindienst <mail@pascalkleindienst.de>
  * @version 1.0
- * 
- * @method boolean isFlagSet(string $flag, array $flags)
- * @method boolean isArgumentSet(string $arg, array $args)
- * @method boolean optionEquals(string $option, mixed $equals, array $options)
- * @method boolean isCommand(string $command, array $commands)
+ *
+ * @method boolean isFlagSet(string $flag)
+ * @method boolean isArgumentSet(string $arg)
+ * @method boolean optionEquals(string $option, mixed $equals)
+ * @method boolean isCommand(string $command)
  */
 class Arguments implements \ArrayAccess
 {
