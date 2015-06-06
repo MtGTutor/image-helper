@@ -10,46 +10,39 @@ before_commands:
 
 tools:
   # Code Sniffer
-  php_code_sniffer:
-    enabled: true
-    command: phpcs
-    config:
-      standard: PSR2
-    filter:
-      excluded_paths:
-        - 'vendor/*'
-
-  # Copy/Paste Detector
-  php_cpd:
-    enabled: true
-    command: phpcpd
-    excluded_dirs:
-      - 'vendor'
+  # php_code_sniffer:
+  #   enabled: true
+  #   command: phpcs
+  #   config:
+  #     standard: PSR2
+  #   filter:
+  #     excluded_paths:
+  #       - 'vendor/*'
 
   # PHP CS Fixer (http://http://cs.sensiolabs.org/).
-  php_cs_fixer:
-    enabled: true
-    command: php-cs-fixer
-    config:
-      level: psr2
-    filter:
-      excluded_paths:
-          - 'vendor/*'
+  # php_cs_fixer:
+  #   enabled: true
+  #   command: php-cs-fixer
+  #   config:
+  #     level: psr2
+  #   filter:
+  #     excluded_paths:
+  #         - 'vendor/*'
 
   # PHP Mess Detector (http://phpmd.org).
-  php_mess_detector:
-    enabled: true
-    command: phpmd
-    config:
-      rulesets:
-        - codesize
-        - unusedcode
-        - naming
-        - design
-        - controversial
-    filter:
-      excluded_paths:
-          - 'vendor/*'
+  # php_mess_detector:
+  #   enabled: true
+  #   command: phpmd
+  #   config:
+  #     rulesets:
+  #       - codesize
+  #       - unusedcode
+  #       - naming
+  #       - design
+  #       - controversial
+  #   filter:
+  #     excluded_paths:
+  #         - 'vendor/*'
 
   # Analyzes the size and structure of a PHP project.
   php_pdepend:
