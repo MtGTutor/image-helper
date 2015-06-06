@@ -4,7 +4,6 @@ filter:
 checks:
   php:
     code_rating: true
-    duplication: true
 
 before_commands:
   - "composer install --prefer-source"
@@ -36,13 +35,6 @@ tools:
     filter:
       excluded_paths:
           - 'vendor/*'
-
-  # Analyzes the size and structure of a PHP project.
-  php_loc:
-    enabled: true
-    command: phploc
-    excluded_dirs:
-      - vendor
 
   # PHP Mess Detector (http://phpmd.org).
   php_mess_detector:
