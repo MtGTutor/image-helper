@@ -3,7 +3,7 @@
 /**
  * Simple CLI program to help getting the card images for MtG-Tutor ready
  * @author PascalKleindienst <mail@pascalkleindienst.de>
- * @version 1.0 
+ * @version 1.0
  */
 
 // check if vendor folder exists, otherwise run composer update

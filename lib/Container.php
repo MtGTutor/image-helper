@@ -5,7 +5,7 @@ use ReflectionClass;
 /**
  * Simple DI Container Class
  * @author PascalKleindienst <mail@pascalkleindienst.de>
- * @version 1.0 
+ * @version 1.0
  */
 class Container
 {
@@ -16,7 +16,7 @@ class Container
 
     /**
      * Add a service to the container
-     * @param  string $name    
+     * @param  string $name
      * @param  string|callable $service
      * @return void
      */

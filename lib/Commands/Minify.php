@@ -5,7 +5,7 @@ use MtGTutor\CLI\ImageHelper\Arguments;
 /**
  * Commands Class to handle Minify Command
  * @author PascalKleindienst <mail@pascalkleindienst.de>
- * @version 1.0 
+ * @version 1.0
  */
 class Minify implements CommandInterface
 {

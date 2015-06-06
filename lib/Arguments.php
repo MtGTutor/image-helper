@@ -3,7 +3,7 @@
 /**
  * Simple Class to handle arguments
  * @author PascalKleindienst <mail@pascalkleindienst.de>
- * @version 1.0 
+ * @version 1.0
  */
 class Arguments implements \ArrayAccess
 {
@@ -32,7 +32,7 @@ class Arguments implements \ArrayAccess
 
     /**
      * Checks for flags, arguments, options and commands
-     * @param  string $method 
+     * @param  string $method
      * @param  array $args
      * @return boolean
      */
@@ -115,8 +115,7 @@ class Arguments implements \ArrayAccess
                 // is it the syntax '--option=argument'?
                 if (strpos($com, '=')) {
                     list($com, $value) = explode("=", $com, 2);
-                }
-                // or is the option not followed by another option but by arguments?
+                } // or is the option not followed by another option but by arguments?
                 elseif (count($args) > 0 && strpos($args[0], '-') !== 0) {
                     while (count($args) > 0 && strpos($args[0], '-') !== 0) {
                         $value .= array_shift($args).' ';

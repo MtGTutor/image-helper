@@ -9,7 +9,7 @@ define('DEFAULT_DEST_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRE
 /**
  * Main Entry point
  * @author PascalKleindienst <mail@pascalkleindienst.de>
- * @version 1.0 
+ * @version 1.0
  */
 class Application
 {

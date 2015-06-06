@@ -6,7 +6,7 @@ use MtGTutor\CLI\ImageHelper\Container;
 /**
  * Command Interface used by all Commands
  * @author PascalKleindienst <mail@pascalkleindienst.de>
- * @version 1.0 
+ * @version 1.0
  */
 interface CommandInterface
 {
