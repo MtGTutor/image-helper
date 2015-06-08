@@ -169,6 +169,8 @@ class Minify implements CommandInterface
         // Output function
         $output = function ($list) {
             $max = count($list);
+            $list = array_values($list);
+
             echo 'Available Sets: ' . PHP_EOL;
             for ($i=0; $i < $max; $i++) {
                 echo '[' . ($i+1) . ']: ' . $list[$i] . PHP_EOL;
