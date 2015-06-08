@@ -93,12 +93,25 @@ class Minify implements CommandInterface
         $folders = $this->args['arguments'];
         $srcDir  = $this->args->isFlagSet('src-dir') ? $this->args['flags']['src-dir'] : DEFAULT_SRC_DIR;
         $destDir = $this->args->isFlagSet('dest-dir') ? $this->args['flags']['dest-dir'] : DEFAULT_DEST_DIR;
-         
+
         // if no folders are specified - display available list from --src-dir to select from
         if (empty($folders)) {
             $folders = $this->selectFromList($srcDir);
         }
         
+        // minify
+        $this->runMinifier($folders, $srcDir, $destDir);
+    }
+
+    /**
+     * Minify images
+     * @param  array $folders
+     * @param  string $src
+     * @param  string $dest
+     * @return void
+     */
+    protected function runMinifier($folders, $src, $dest)
+    {
         // optimizer and image manager
         $optimizer = $this->container->resolve(
             'Optimizer',
@@ -111,7 +124,7 @@ class Minify implements CommandInterface
 
         // get files
         foreach ($folders as $folder) {
-            $path = $srcDir . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+            $path = $src . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
             $files = glob($path . '*.{jpg,jpeg,gif,png}', GLOB_NOSORT|GLOB_BRACE);
             
             // minify files
@@ -119,9 +132,9 @@ class Minify implements CommandInterface
                 // save path
                 $save = $file;
                 if ($this->args->isFlagSet('k') || $this->args->optionEquals('keep', true)) {
-                    $save = str_replace($srcDir, $destDir, $save);
-                    
-                    $dir = $destDir . DIRECTORY_SEPARATOR . $folder;
+                    $save = str_replace($src, $dest, $save);
+                    $dir  = $dest . DIRECTORY_SEPARATOR . $folder;
+
                     if (!file_exists($dir)) {
                         mkdir($dir);
                     }
