@@ -1,6 +1,8 @@
 <?php namespace MtGTutor\CLI\ImageHelper\Commands;
 
 use MtGTutor\CLI\ImageHelper\Arguments;
+use MtGTutor\CLI\ImageHelper\Container;
+use Intervention\Image\ImageManager;
 
 /**
  * Commands Class to handle Minify Command
@@ -30,9 +32,24 @@ class Minify implements CommandInterface
     const BIT32 = 'x86';
 
     /**
+     * @var int|null
+     */
+    const HEIGHT = 510;
+
+    /**
+     * @var int|null
+     */
+    const WIDTH = null;
+
+    /**
      * @var Arguments
      */
     protected $args;
+
+    /**
+     * @var Container
+     */
+    protected $container;
 
     /**
      * @var string
@@ -45,15 +62,16 @@ class Minify implements CommandInterface
     private $architecture = self::BIT32;
 
     /**
-     * Set Arguments
+     * Set Arguments and Container
      * @param Arguments $args
+     * @param Container $container
      */
-    public function __construct(Arguments $args)
+    public function __construct(Arguments $args, Container $container)
     {
-        // set args
-        $this->args = $args;
+        // setter
+        $this->args      = $args;
+        $this->container = $container;
 
-        var_dump($this->usedOS, $this->architecture);
         // check for os
         if (strpos(strtolower(php_uname('s')), 'windows') !== false) {
             $this->usedOS = self::WINDOWS;
@@ -67,6 +85,8 @@ class Minify implements CommandInterface
 
     /**
      * {@inheritDoc}
+     * @todo : add options for width and height
+     * @todo : add file copy to prevent overwriting
      */
     public function run()
     {
@@ -79,14 +99,45 @@ class Minify implements CommandInterface
             $folders = $this->selectFromList($srcDir);
         }
         
-        //@TODO: minify
-        // $optimizer = new ImageOptimizer([
-        //     ImageOptimizer::OPTIMIZER_OPTIPNG   => getOptimizerPath('optipng'),
-        //     ImageOptimizer::OPTIMIZER_JPEGOPTIM => getOptimizerPath('jpegoptim'),
-        //     ImageOptimizer::OPTIMIZER_GIFSICLE  => getOptimizerPath('gifsicle')
-        // ]);
+        // optimizer and image manager
+        $optimizer = $this->container->resolve(
+            'Optimizer',
+            $this->getOptimizerPath('optipng'),
+            $this->getOptimizerPath('jpegoptim'),
+            $this->getOptimizerPath('gifsicle')
+        );
+        $driver = (!extension_loaded('imagick')) ? 'gd' : 'imagick';
+        $imageManager = $this->container->resolve('ImageManager', $driver);
 
-        // $optimizer->optimize(dirname(__FILE__) . "/test.jpg"); //return true
+        // get files
+        foreach ($folders as $folder) {
+            $path = $srcDir . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+            $files = glob($path . '*.{jpg,jpeg,gif,png}', GLOB_NOSORT|GLOB_BRACE);
+            
+            // minify files
+            foreach ($files as $file) {
+                // save path
+                $save = $file;
+                if ($this->args->isFlagSet('k') || $this->args->optionEquals('keep', true)) {
+                    $save = str_replace($srcDir, $destDir, $save);
+                    
+                    $dir = $destDir . DIRECTORY_SEPARATOR . $folder;
+                    if (!file_exists($dir)) {
+                        mkdir($dir);
+                    }
+                }
+
+                // resize imaeg
+                $image = $imageManager->make($file)->resize(self::WIDTH, self::HEIGHT, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $image->save($save);
+
+                // optimize
+                $optimizer->optimize($save);
+            }
+        }
     }
 
     /**
@@ -147,7 +198,8 @@ class Minify implements CommandInterface
      */
     protected function getOptimizerPath($optimizer)
     {
-        $path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'optimizers' . DIRECTORY_SEPARATOR;
+        $separator = DIRECTORY_SEPARATOR;
+        $path      = dirname(__FILE__) . $separator . '..' . $separator . '..' . $separator . 'optimizers' . $separator;
         
         // check if windows, so we can append .exe
         if ($this->usedOS === self::WINDOWS) {
@@ -155,6 +207,6 @@ class Minify implements CommandInterface
         }
 
         // return path
-        return $path . $this->usedOS. DIRECTORY_SEPARATOR . $this->architecture . DIRECTORY_SEPARATOR . $optimizer;
+        return $path . $this->usedOS. $separator . $this->architecture . $separator . $optimizer;
     }
 }

@@ -29,7 +29,12 @@ if (php_sapi_name() == "cli") {
             \Extlib\ImageOptimizer::OPTIMIZER_GIFSICLE  => $gifsicle
         ]);
     });
-    
+
+    // bind image Manager to container
+    $container->bind('ImageManager', function ($driver = "imagick") {
+        return new \Intervention\Image\ImageManager(['driver' => $driver]);
+    });
+
     // Minify-Command
     if ($args->isCommand('minify')) {
         $command = new Commands\Minify($args, $container);

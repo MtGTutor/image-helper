@@ -28,10 +28,9 @@ class Container
     /**
      * Return instance of service
      * @param  string $name
-     * @param  mixed $args
      * @return mixed
      */
-    public function resolve($name, $args)
+    public function resolve($name)
     {
         if (array_key_exists($name, $this->container)) {
             // get args
