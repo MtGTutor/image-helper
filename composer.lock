@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "22604177cb5ae0400def12e8e3a1a5d0",
+    "hash": "d902b37a966242f7f4fa5e05dfbfe889",
     "packages": [
         {
             "name": "bensquire/php-image-optim",
@@ -62,12 +62,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "1f33a7c6c5847ddaa4c0c347be375d38ee4c2f43"
+                "reference": "f388f8cbdecb28e960d257c975dc9b5254c4c7ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/1f33a7c6c5847ddaa4c0c347be375d38ee4c2f43",
-                "reference": "1f33a7c6c5847ddaa4c0c347be375d38ee4c2f43",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/f388f8cbdecb28e960d257c975dc9b5254c4c7ba",
+                "reference": "f388f8cbdecb28e960d257c975dc9b5254c4c7ba",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +110,7 @@
                 "thumbnail",
                 "watermark"
             ],
-            "time": "2015-05-14 08:43:38"
+            "time": "2015-06-05 13:31:06"
         },
         {
             "name": "lciolecki/php-image-optimizer",
