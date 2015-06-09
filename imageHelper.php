@@ -16,10 +16,11 @@ if (php_sapi_name() == "cli") {
     // include dependencies
     require_once 'vendor/autoload.php';
 
-    // create args
-    $args = new Arguments($argv);
+    // create needed classes
+    $args      = new Arguments($argv);
     $container = new Container();
-    $command = null;
+    $app       = new Application($args);
+    $command   = null;
 
     // bind optimizer to container
     $container->bind('Optimizer', function ($optipng, $jpegoptim, $gifsicle) {
@@ -41,6 +42,5 @@ if (php_sapi_name() == "cli") {
     }
 
     // run app
-    $app = new Application($args, $command);
-    $app->run();
+    $app->run($command);
 }

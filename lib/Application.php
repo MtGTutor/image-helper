@@ -24,26 +24,19 @@ class Application
     public $args;
 
     /**
-     * @var CommandInterface
-     */
-    public $command;
-
-    /**
      * @param Arguments $args
-     * @param CommandInterface $command
      */
-    public function __construct(Arguments $args, CommandInterface $command = null)
+    public function __construct(Arguments $args)
     {
         $this->args = $args;
-        $this->command = $command;
     }
 
     /**
      * Main Entry point
-     * @param array $args
+     * @param CommandInterface $command
      * @return int
      */
-    public function run()
+    public function run(CommandInterface $command = null)
     {
         // no arguments (except for imageHelper) => display help text
         if ($this->args->isEmpty()) {
@@ -57,8 +50,8 @@ class Application
         }
 
         // run command
-        if (!is_null($this->command)) {
-            $this->command->run();
+        if (!is_null($command)) {
+            $command->run();
         }
         
         return 0;
