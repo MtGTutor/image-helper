@@ -52,6 +52,11 @@ class Minify implements CommandInterface
     protected $container;
 
     /**
+     * @var boolean
+     */
+    protected $isDebug = false;
+
+    /**
      * @var string
      */
     private $usedOS = self::LINUX;
@@ -71,6 +76,7 @@ class Minify implements CommandInterface
         // setter
         $this->args      = $args;
         $this->container = $container;
+        $this->isDebug   = $this->args->isFlagSet('d') || $this->args->optionEquals('debug', true);
 
         // check for os
         if (strpos(strtolower(php_uname('s')), 'windows') !== false) {
@@ -86,7 +92,6 @@ class Minify implements CommandInterface
     /**
      * {@inheritDoc}
      * @todo : add options for width and height
-     * @todo : add file copy to prevent overwriting
      */
     public function run()
     {
@@ -100,6 +105,7 @@ class Minify implements CommandInterface
         }
         
         // minify
+        echo "\n\nStart Optimizing: \n";
         $this->runMinifier($folders, $srcDir, $destDir);
     }
 
@@ -119,38 +125,73 @@ class Minify implements CommandInterface
             $this->getOptimizerPath('jpegoptim'),
             $this->getOptimizerPath('gifsicle')
         );
-        $driver = (!extension_loaded('imagick')) ? 'gd' : 'imagick';
+        $driver       = (!extension_loaded('imagick')) ? 'gd' : 'imagick';
         $imageManager = $this->container->resolve('ImageManager', $driver);
+        $maxFiles     = 0;
+        $closed       = 0;
 
-        // get files
-        foreach ($folders as $folder) {
-            $path = $src . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
-            $files = glob($path . '*.{jpg,jpeg,gif,png}', GLOB_NOSORT|GLOB_BRACE);
-            
-            // minify files
-            foreach ($files as $file) {
-                // save path
-                $save = $file;
-                if ($this->args->isFlagSet('k') || $this->args->optionEquals('keep', true)) {
-                    $save = str_replace($src, $dest, $save);
-                    $dir  = $dest . DIRECTORY_SEPARATOR . $folder;
+        // get max number of files
+        getFiles($folders, $src, function ($files) use (&$maxFiles) {
+            $maxFiles += count($files);
+        });
 
-                    if (!file_exists($dir)) {
-                        mkdir($dir);
+        // minify files
+        getFiles(
+            $folders,
+            $src,
+            function ($files, $folder, $src) use (&$closed, &$maxFiles, $dest, $imageManager, $optimizer) {
+                foreach ($files as $file) {
+                    // save path
+                    $save = $file;
+                    if ($this->args->isFlagSet('k') || $this->args->optionEquals('keep', true)) {
+                        $save = $this->getFilename($src, $dest, $folder, $save);
+                        $dir  = $dest . DIRECTORY_SEPARATOR . $folder;
+
+                        if (!file_exists($dir)) {
+                            mkdir($dir);
+                        }
                     }
+
+                    // echo user info
+                    if ($this->isDebug) {
+                        echo str_pad("Optimizing: " . basename($save), 52, " ", STR_PAD_RIGHT);
+                    }
+                    progress(++$closed, $maxFiles, !$this->isDebug);
+
+                    // resize image
+                    $image = $imageManager->make($file)->resize(self::WIDTH, self::HEIGHT, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                    $image->save($save);
+                    $image->destroy(); #free memory
+
+                    // optimize
+                    $optimizer->optimize($save);
                 }
-
-                // resize imaeg
-                $image = $imageManager->make($file)->resize(self::WIDTH, self::HEIGHT, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-                $image->save($save);
-
-                // optimize
-                $optimizer->optimize($save);
             }
-        }
+        );
+    }
+
+    /**
+     * Get new filename for saving
+     * @param  string $src
+     * @param  string $dest
+     * @param  string $folder
+     * @param  string $file
+     * @return string
+     */
+    public function getFilename($src, $dest, $folder, $file)
+    {
+        $basename = basename($file);
+        $baseNew  = str_replace([' ', '.full.'], ['+', '.'], $basename);
+
+        // Replace src with dest, Make folder lowercase, and make filename web friendly
+        return str_replace(
+            [ $src, $folder, $basename ],
+            [ $dest, strtolower($folder), $baseNew ],
+            $file
+        );
     }
 
     /**

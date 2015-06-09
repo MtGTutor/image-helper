@@ -21,3 +21,26 @@ function progress($processed, $max, $showPoints)
     
     echo $points . sprintf("%.2f", $progress) . str_pad("% ", 27, " ", STR_PAD_RIGHT). "\r";
 }
+
+/**
+ * get files from src
+ * @param  array $folders
+ * @param  string $src
+ * @param  mixed $callback
+ * @return array
+ */
+function getFiles($folders, $src, $callback = null)
+{
+    $files = [];
+    foreach ($folders as $folder) {
+        $path    = $src . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+        $glob    = glob($path . '*.{jpg,jpeg,gif,png}', GLOB_NOSORT|GLOB_BRACE);
+        $files[] = $glob;
+
+        if (is_callable($callback)) {
+            call_user_func($callback, $glob, $folder, $src);
+        }
+    }
+
+    return $files;
+}
