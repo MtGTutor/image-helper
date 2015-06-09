@@ -24,11 +24,32 @@ class Application
     public $args;
 
     /**
+     * @var array
+     */
+    public static $flags = [
+        'keep'    => false,
+        'debug'   => false,
+        'version' => false
+    ];
+
+    /**
      * @param Arguments $args
      */
     public function __construct(Arguments $args)
     {
         $this->args = $args;
+
+        if ($this->args->isFlagSet('d') || $this->args->optionEquals('debug', true)) {
+            self::$flags['debug'] = true;
+        }
+
+        if ($this->args->isFlagSet('k') || $this->args->optionEquals('keep', true)) {
+            self::$flags['keep'] = true;
+        }
+
+        if ($this->args->isFlagSet('v') || $this->args->optionEquals('version', true)) {
+            self::$flags['version'] = true;
+        }
     }
 
     /**
@@ -45,7 +66,7 @@ class Application
         }
 
         // display version
-        if ($this->args->isFlagSet('v') || $this->args->optionEquals('version', true)) {
+        if (self::$flags['version']) {
             echo 'imageHelper version ' . self::VERSION;
         }
 
