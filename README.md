@@ -7,7 +7,8 @@ A simple CLI program to help with different image related tasks for [MtG-Tutor](
 ## Usage
 
 ``` shell
-php imageHelper.php <command> [<args>] [--version] [--src-dir=<path>] [--dest-dir=<path>] [--keep] [--debug] [-k] [-d] [-v]
+php imageHelper.php <command> [<args>] [--src-dir=<path>] [--dest-dir=<path>] [--width=<integer>] [--height=<integer>]
+                        [--keep] [--debug] [--version] [-k] [-d] [-v]
 ```
 
 ### Commands
@@ -21,9 +22,11 @@ php imageHelper.php <command> [<args>] [--version] [--src-dir=<path>] [--dest-di
 | Name     | Default Value | Description                                                                               |
 | -------- | ------------- | ----------------------------------------------------------------------------------------- |
 | debug    | `TRUE`        | Shows debug information *(same as d flag)*                                                |
-| dest-dir | `dest`        | Specify a folder where results should be saved                                            |
 | keep     | `TRUE`        | Do not overwrite files in `src-dir`, instead save result in `dest-dir` *(same as k flag)* |
+| dest-dir | `dest`        | Specify a folder where results should be saved                                            |
 | src-dir  | `src`         | Specify a folder where images are located                                                 |
+| width    | `NULL`        | Specify a width for the image. `NULL` means auto width *(keep aspect ratio)*              |
+| height   | `510`         | Specify a height for the image. `NULL` means auto height *(keep aspect ratio)*            |
 | version  | `TRUE`        | Shows current Version of the program *(same as v flag)*                                   |
 
 ### Flags
