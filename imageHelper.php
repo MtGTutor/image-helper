@@ -17,10 +17,11 @@ if (php_sapi_name() == "cli") {
     require_once 'vendor/autoload.php';
 
     // create needed classes
+    $driver    = (!extension_loaded('imagick')) ? 'gd' : 'imagick';
     $args      = new Arguments($argv);
     $container = new Container();
     $app       = new Application($args);
-    $files     = new FileHandler($args);
+    $files     = new FileHandler($args, new \Intervention\Image\ImageManager(['driver' => $driver]));
     $command   = null;
     
     // bind optimizer to container
@@ -32,14 +33,14 @@ if (php_sapi_name() == "cli") {
         ]);
     });
 
-    // bind image Manager to container
-    $container->bind('ImageManager', function ($driver = "imagick") {
-        return new \Intervention\Image\ImageManager(['driver' => $driver]);
-    });
-
     // Minify-Command
     if ($args->isCommand('minify')) {
         $command = new Commands\Minify($args, $files, $container);
+    }
+
+    // Thumbnail-Command
+    if ($args->isCommand('thumbnail')) {
+        $command = new Commands\Thumbnail($args, $files, $container);
     }
 
     // run app

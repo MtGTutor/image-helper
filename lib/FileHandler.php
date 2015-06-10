@@ -1,5 +1,7 @@
 <?php namespace MtGTutor\CLI\ImageHelper;
 
+use Intervention\Image\ImageManager;
+
 /**
  * File Handler
  * @author PascalKleindienst <mail@pascalkleindienst.de>
@@ -10,12 +12,12 @@ class FileHandler
     /**
      * @var int|null
      */
-    protected $height = 510;
+    public $height = 510;
 
     /**
      * @var int|null
      */
-    protected $width = null;
+    public $width = null;
 
     /**
      * @var string
@@ -28,12 +30,23 @@ class FileHandler
     public $dest = DEFAULT_DEST_DIR;
 
     /**
+     * @var Arguments
+     */
+    protected $args;
+
+    /**
+     * @var ImageManager
+     */
+    protected $manager;
+
+    /**
      * Setter
      * @param Arguments $args
      */
-    public function __construct(Arguments $args)
+    public function __construct(Arguments $args, ImageManager $manager)
     {
-        $this->args   = $args;
+        $this->args    = $args;
+        $this->manager = $manager;
 
         // set dirs
         if ($args->isFlagSet('src-dir')) {
@@ -58,9 +71,9 @@ class FileHandler
      * @param  string $file
      * @param  string $save
      */
-    public function resize($imageManager, $file, $save)
+    public function resize($file, $save)
     {
-        $image = $imageManager->make($file)->resize($this->width, $this->height, function ($constraint) {
+        $image = $this->manager->make($file)->resize($this->width, $this->height, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
@@ -107,21 +120,25 @@ class FileHandler
      * Get new filename for saving
      * @param  string $folder
      * @param  string $file
+     * @param \Closure $callback 
      * @return string
      */
-    public function getNewFilename($folder, $file)
+    public function getNewFilename($folder, $file, $callback = null)
     {
-        if (Application::$flags['keep']) {
-            $this->createFolder($folder);
-            $basename = basename($file);
-            $baseNew  = str_replace([' ', '.full.'], ['+', '.'], $basename);
+        $this->createFolder($folder);
+        $basename = basename($file);
+        $baseNew  = str_replace([' ', '.full.'], ['+', '.'], $basename);
 
-            // Replace src with dest, Make folder lowercase, and make filename web friendly
-            return str_replace(
-                [ $this->src, $folder, $basename ],
-                [ $this->dest, strtolower($folder), $baseNew ],
-                $file
-            );
+        // Replace src with dest, Make folder lowercase, and make filename web friendly
+        $file = str_replace(
+            [ $this->src, $folder, $basename ],
+            [ $this->dest, strtolower($folder), $baseNew ],
+            $file
+        );
+
+        // custom replacements
+        if (is_callable($callback)) {
+            $file = call_user_func($callback, $folder, $file);
         }
         
         return $file;
