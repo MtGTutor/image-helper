@@ -74,7 +74,7 @@ class FileHandler
      */
     public function createFolder($set)
     {
-        $dir = $this->dest . DIRECTORY_SEPARATOR . $set;
+        $dir = $this->dest . DIRECTORY_SEPARATOR . strtolower($set);
 
         if (!file_exists($dir)) {
             mkdir($dir);
@@ -136,8 +136,8 @@ class FileHandler
         $folders = [];
         $list = glob($this->src . '/*', GLOB_ONLYDIR);
 
-        foreach ($list as $key => $this->src) {
-            $list[$key] = basename($this->src);
+        foreach ($list as $key => $path) {
+            $list[$key] = basename($path);
         }
 
         // Output function
