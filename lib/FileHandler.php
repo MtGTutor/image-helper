@@ -67,7 +67,6 @@ class FileHandler
 
     /**
      * Resize image and save it
-     * @param  \Intervention\Image\ImageManager $imageManager
      * @param  string $file
      * @param  string $save
      */
@@ -97,7 +96,7 @@ class FileHandler
     /**
      * get files from src
      * @param  array $folders
-     * @param  mixed $callback
+     * @param  \Closure $callback
      * @return array
      */
     public function files($folders, $callback = null)

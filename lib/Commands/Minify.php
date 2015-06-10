@@ -112,10 +112,8 @@ class Minify implements CommandInterface
             $this->getOptimizerPath('jpegoptim'),
             $this->getOptimizerPath('gifsicle')
         );
-        $driver       = (!extension_loaded('imagick')) ? 'gd' : 'imagick';
-        $imageManager = $this->container->resolve('ImageManager', $driver);
-        $maxFiles     = 0;
-        $closed       = 0;
+        $maxFiles = 0;
+        $closed   = 0;
 
         // get max number of files
         $this->fileHandler->files($folders, function ($files) use (&$maxFiles) {
@@ -125,10 +123,13 @@ class Minify implements CommandInterface
         // minify files
         $this->fileHandler->files(
             $folders,
-            function ($files, $folder) use (&$closed, &$maxFiles, $imageManager, $optimizer) {
+            function ($files, $folder) use (&$closed, &$maxFiles, $optimizer) {
                 foreach ($files as $file) {
                     // save path
-                    $save = $this->fileHandler->getNewFilename($folder, $file);
+                    $save = $file;
+                    if (Application::$flags['keep']) {
+                        $save = $this->fileHandler->getNewFilename($folder, $save);
+                    }
                     
                     // echo user info
                     if (Application::$flags['debug']) {
@@ -137,7 +138,7 @@ class Minify implements CommandInterface
                     progress(++$closed, $maxFiles, !Application::$flags['debug']);
 
                     // resize image
-                    $this->fileHandler->resize($imageManager, $file, $save);
+                    $this->fileHandler->resize($file, $save);
 
                     // optimize
                     $optimizer->optimize($save);
