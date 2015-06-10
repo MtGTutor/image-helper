@@ -2,6 +2,7 @@
 
 use MtGTutor\CLI\ImageHelper\Arguments;
 use MtGTutor\CLI\ImageHelper\Container;
+use MtGTutor\CLI\ImageHelper\FileHandler;
 
 /**
  * Command Interface used by all Commands
@@ -11,10 +12,12 @@ use MtGTutor\CLI\ImageHelper\Container;
 interface CommandInterface
 {
     /**
-     * Set Arguments
+     * Dependency injection
      * @param Arguments $args
+     * @param FileHandler $fileHandler
+     * @param Container $container
      */
-    public function __construct(Arguments $args, Container $container);
+    public function __construct(Arguments $args, FileHandler $filehandler, Container $container);
 
     /**
      * Run the command

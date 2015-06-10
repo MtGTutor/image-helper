@@ -20,8 +20,9 @@ if (php_sapi_name() == "cli") {
     $args      = new Arguments($argv);
     $container = new Container();
     $app       = new Application($args);
+    $files     = new FileHandler($args);
     $command   = null;
-
+    
     // bind optimizer to container
     $container->bind('Optimizer', function ($optipng, $jpegoptim, $gifsicle) {
         return new \Extlib\ImageOptimizer([
@@ -38,7 +39,7 @@ if (php_sapi_name() == "cli") {
 
     // Minify-Command
     if ($args->isCommand('minify')) {
-        $command = new Commands\Minify($args, $container);
+        $command = new Commands\Minify($args, $files, $container);
     }
 
     // run app
