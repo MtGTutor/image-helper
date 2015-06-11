@@ -13,6 +13,21 @@ use MtGTutor\CLI\ImageHelper\FileHandler;
 abstract class AbstractCommand implements CommandInterface
 {
     /**
+     * @var Arguments
+     */
+    protected $args;
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * @var FileHandler
+     */
+    protected $fileHandler;
+    
+    /**
      * selected folders
      * @var array
      */
@@ -29,7 +44,7 @@ abstract class AbstractCommand implements CommandInterface
     /**
      * Dependency injection
      * @param Arguments $args
-     * @param FileHandler $fileHandler
+     * @param FileHandler $filehandler
      * @param Container $container
      */
     public function __construct(Arguments $args, FileHandler $filehandler, Container $container)
