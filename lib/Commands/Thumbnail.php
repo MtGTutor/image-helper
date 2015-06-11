@@ -1,6 +1,5 @@
 <?php namespace MtGTutor\CLI\ImageHelper\Commands;
 
-use MtGTutor\CLI\ImageHelper\Application;
 use MtGTutor\CLI\ImageHelper\Arguments;
 use MtGTutor\CLI\ImageHelper\Container;
 use MtGTutor\CLI\ImageHelper\FileHandler;
@@ -10,23 +9,8 @@ use MtGTutor\CLI\ImageHelper\FileHandler;
  * @author PascalKleindienst <mail@pascalkleindienst.de>
  * @version 1.0
  */
-class Thumbnail implements CommandInterface
+class Thumbnail extends AbstractCommand implements CommandInterface
 {
-    /**
-     * @var Arguments
-     */
-    protected $args;
-
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var FileHandler
-     */
-    protected $fileHandler;
-
      /**
      * Set Arguments, Filehandler and Container
      * @param Arguments $args
@@ -35,14 +19,12 @@ class Thumbnail implements CommandInterface
      */
     public function __construct(Arguments $args, FileHandler $filehandler, Container $container)
     {
-        // setter
-        $this->args        = $args;
-        $this->container   = $container;
-        $this->fileHandler = $filehandler;
+        // dependencies
+        parent::__construct($args, $filehandler, $container);
 
         // no custom size height -> set height to half of normal height
         if (!array_key_exists('height', $args['options']) && $this->fileHandler->height !== null) {
-            $this->fileHandler->height = ceil($this->fileHandler->height / 2);
+            $this->fileHandler->height = (int) ceil($this->fileHandler->height / 2);
         }
     }
 
@@ -51,38 +33,14 @@ class Thumbnail implements CommandInterface
      */
     public function run()
     {
-        $folders = $this->args['arguments'];
+        // run parent
+        parent::run();
 
-        // if no folders are specified - display available list from --src-dir to select from
-        if (empty($folders)) {
-            $folders = $this->fileHandler->selectFromList();
-        }
-
-        // minify
+        // resize
         echo "\n\nStart Creating Thumbnails: \n";
-        $this->createThumbnails($folders);
-    }
-
-     /**
-     * Create Thumbnails
-     * @param  array $folders
-     * @return void
-     */
-    protected function createThumbnails($folders)
-    {
-        // Debug Info
-        $maxFiles = 0;
-        $closed   = 0;
-
-        // get max number of files
-        $this->fileHandler->files($folders, function ($files) use (&$maxFiles) {
-            $maxFiles += count($files);
-        });
-
-        // minify files
         $this->fileHandler->files(
-            $folders,
-            function ($files, $folder) use (&$closed, &$maxFiles) {
+            $this->folders,
+            function ($files, $folder) {
                 foreach ($files as $file) {
                     // save path
                     $save = $this->fileHandler->getNewFilename($folder, $file, function ($folder, $file) {
@@ -90,11 +48,8 @@ class Thumbnail implements CommandInterface
                         return str_replace($pathinfo['filename'], $pathinfo['filename'] . '.thumb', $file);
                     });
 
-                    // echo user info
-                    if (Application::$flags['debug']) {
-                        echo str_pad("Saving: " . basename($save), 52, " ", STR_PAD_RIGHT);
-                    }
-                    progress(++$closed, $maxFiles, !Application::$flags['debug']);
+                    // echo debug info
+                    $this->printDebugInfo("Saving: " . basename($save));
 
                     // resize image
                     $this->fileHandler->resize($file, $save);

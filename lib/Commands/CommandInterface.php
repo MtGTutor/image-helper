@@ -14,7 +14,7 @@ interface CommandInterface
     /**
      * Dependency injection
      * @param Arguments $args
-     * @param FileHandler $fileHandler
+     * @param FileHandler $filehandler
      * @param Container $container
      */
     public function __construct(Arguments $args, FileHandler $filehandler, Container $container);

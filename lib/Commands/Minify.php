@@ -10,7 +10,7 @@ use MtGTutor\CLI\ImageHelper\FileHandler;
  * @author PascalKleindienst <mail@pascalkleindienst.de>
  * @version 1.0
  */
-class Minify implements CommandInterface
+class Minify extends AbstractCommand implements CommandInterface
 {
     /**
      * @var string
@@ -33,21 +33,6 @@ class Minify implements CommandInterface
     const BIT32 = 'x86';
 
     /**
-     * @var Arguments
-     */
-    protected $args;
-
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var FileHandler
-     */
-    protected $fileHandler;
-
-    /**
      * @var string
      */
     private $usedOS = self::LINUX;
@@ -65,10 +50,8 @@ class Minify implements CommandInterface
      */
     public function __construct(Arguments $args, FileHandler $filehandler, Container $container)
     {
-        // setter
-        $this->args        = $args;
-        $this->container   = $container;
-        $this->fileHandler = $filehandler;
+        // dependencies
+        parent::__construct($args, $filehandler, $container);
 
         // check for os
         if (strpos(strtolower(php_uname('s')), 'windows') !== false) {
@@ -86,44 +69,22 @@ class Minify implements CommandInterface
      */
     public function run()
     {
-        $folders = $this->args['arguments'];
-
-        // if no folders are specified - display available list from --src-dir to select from
-        if (empty($folders)) {
-            $folders = $this->fileHandler->selectFromList();
-        }
+        // run parent
+        parent::run();
 
         // minify
         echo "\n\nStart Optimizing: \n";
-        $this->runMinifier($folders);
-    }
-
-    /**
-     * Minify images
-     * @param  array $folders
-     * @return void
-     */
-    protected function runMinifier($folders)
-    {
-        // optimizer and image manager
-        $optimizer = $this->container->resolve(
-            'Optimizer',
-            $this->getOptimizerPath('optipng'),
-            $this->getOptimizerPath('jpegoptim'),
-            $this->getOptimizerPath('gifsicle')
-        );
-        $maxFiles = 0;
-        $closed   = 0;
-
-        // get max number of files
-        $this->fileHandler->files($folders, function ($files) use (&$maxFiles) {
-            $maxFiles += count($files);
-        });
-
-        // minify files
         $this->fileHandler->files(
-            $folders,
-            function ($files, $folder) use (&$closed, &$maxFiles, $optimizer) {
+            $this->folders,
+            function ($files, $folder) {
+                // optimizer and image manager
+                $optimizer = $this->container->resolve(
+                    'Optimizer',
+                    $this->getOptimizerPath('optipng'),
+                    $this->getOptimizerPath('jpegoptim'),
+                    $this->getOptimizerPath('gifsicle')
+                );
+
                 foreach ($files as $file) {
                     // save path
                     $save = $file;
@@ -131,11 +92,8 @@ class Minify implements CommandInterface
                         $save = $this->fileHandler->getNewFilename($folder, $save);
                     }
                     
-                    // echo user info
-                    if (Application::$flags['debug']) {
-                        echo str_pad("Optimizing: " . basename($save), 52, " ", STR_PAD_RIGHT);
-                    }
-                    progress(++$closed, $maxFiles, !Application::$flags['debug']);
+                    // echo debug info
+                    $this->printDebugInfo("Optimizing: " . basename($save));
 
                     // resize image
                     $this->fileHandler->resize($file, $save);
